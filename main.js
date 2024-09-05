@@ -84,6 +84,16 @@ function setCubeVals(x, y, z, rx, ry, rz) {
 	cubeGroup.rotation.set(-rx, -ry, -rz);
 }
 
+function addCubeVals(x, y, z, rx, ry, rz){
+	dotXgroup.position.set(0, y, z);
+	dotYgroup.position.set(x, 0, z);
+	dotZgroup.position.set(x, y, 0);
+
+	pos = new THREE.Vector3(x,y,z)
+	cubeGroup.position.set(pos);
+	cubeGroup.rotation.set(-rx, -ry, -rz);
+}
+
 // var t = 0;
 function animate() {
 	// t += 0.01;
