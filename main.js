@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { orbOutput } from '/OrbHandler'
-import { buttonOutput } from '/OrbHandler'
+import { orbOutput } from '/OrbHandler.js'
+import { buttonOutput } from '/OrbHandler.js'
 const scene = new THREE.Scene();
 
 scene.background = new THREE.Color(0x808080);
