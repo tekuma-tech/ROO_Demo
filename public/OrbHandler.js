@@ -84,14 +84,13 @@ function useGamepadAPI() {
 
 	for (var i = 0; i < gamePads.length; i++) {
 		try{
-
 			if (gamePads[i].id.includes("Tekuma") || gamePads[i].id.includes("ROV Control") || gamePads[i].id.includes("EMU")) {
 				console.log("Valid Controller found");
 				ball = gamePads[i];
 				ballConnected = true;
 				i = gamePads.length;
 				
-				if (ball.axes.length != 6) {
+				if (ball.axes.length == 0) {
 					mode = -1;
 					ballConnected = false;
 				}
