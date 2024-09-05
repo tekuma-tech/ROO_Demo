@@ -83,16 +83,21 @@ function useGamepadAPI() {
 	var gamePads = navigator.getGamepads();
 
 	for (var i = 0; i < gamePads.length; i++) {
-		if (gamePads[i].id.includes("Tekuma") || gamePads[i].id.includes("ROV Control") || gamePads[i].id.includes("EMU")) {
-			console.log("Valid Controller found");
-			ball = gamePads[i];
-			ballConnected = true;
-			i = gamePads.length;
+		try{
 
-			if (ball.axes.length != 6) {
-				mode = -1;
-				ballConnected = false;
+			if (gamePads[i].id.includes("Tekuma") || gamePads[i].id.includes("ROV Control") || gamePads[i].id.includes("EMU")) {
+				console.log("Valid Controller found");
+				ball = gamePads[i];
+				ballConnected = true;
+				i = gamePads.length;
+				
+				if (ball.axes.length != 6) {
+					mode = -1;
+					ballConnected = false;
+				}
 			}
+		} catch(error){
+			console.log(error);
 		}
 	}
 
