@@ -17,7 +17,7 @@ window.addEventListener("gamepadconnected", (event) => {
 });
 
 function canUseGame() {
-	return ("getGamepads" in navigator) && !(navigator.userAgent.includes("Android"));
+	return ("getGamepads" in navigator);// && !(navigator.userAgent.includes("Android"));
 }
 
 function canUseSerial() {
