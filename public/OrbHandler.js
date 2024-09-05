@@ -24,7 +24,13 @@ function canUseSerial() {
 	return "serial" in navigator;
 }
 var usingChrome;
+var usingAndroid;
 function modeTest() {
+	if(navigator.userAgent.includes("Android")) {
+		usingAndroid = true;
+	} else {
+		usingAndroid = true;
+	}
 	if (navigator.userAgent.includes("Chrome")) {
 		usingChrome = true;
 	} else {
@@ -145,8 +151,13 @@ function gamepadConversion() {
 		orbOutput.y = convertAxisToPercent(ball.axes[1]);
 		orbOutput.z = convertAxisToPercent(ball.axes[2]);
 		orbOutput.rx = convertAxisToPercent(ball.axes[3]);
-		orbOutput.ry = convertAxisToPercent(ball.axes[4]);
-		orbOutput.rz = convertAxisToPercent(ball.axes[5]);
+		if(!usingAndroid){
+			orbOutput.ry = convertAxisToPercent(ball.axes[4]);
+			orbOutput.rz = convertAxisToPercent(ball.axes[5]);
+		} else {
+			orbOutput.ry = convertAxisToPercent(0);
+			orbOutput.rz = convertAxisToPercent(0);
+		}
 		
 		buttonOutput = 0;
 		for(var i = 0; i < 16; i++){
