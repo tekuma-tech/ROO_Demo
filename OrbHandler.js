@@ -2,7 +2,9 @@ var mode = 0; //0 os and browser not supported, 1 use gamepad libary, 2 use seri
 var ballConnected = false;
 var ball = 0;
 var orbOutput = { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 };  //range -1 to 1;
-export {orbOutput};
+var buttonOutput = 0;  //16 bools
+export { orbOutput };
+export { buttonOutput };
 var connectedToSerial = function temp() { };
 var disconnectedToSerial = function temp() { };
 
@@ -131,16 +133,21 @@ function gamepadConversion() {
 		// orbOutput.x = convertAxisToPercent(Math.pow(ball.axes[0], 3));
 		// orbOutput.y = convertAxisToPercent(Math.pow(ball.axes[1], 3));
 		// orbOutput.z = convertAxisToPercent(Math.pow(ball.axes[2], 3));
-		orbOutput.rx = convertAxisToPercent(Math.pow(ball.axes[3], 3));
-		orbOutput.ry = convertAxisToPercent(Math.pow(ball.axes[4], 3));
-		orbOutput.rz = convertAxisToPercent(Math.pow(ball.axes[5], 3));
+		// orbOutput.rx = convertAxisToPercent(Math.pow(ball.axes[3], 3));
+		// orbOutput.ry = convertAxisToPercent(Math.pow(ball.axes[4], 3));
+		// orbOutput.rz = convertAxisToPercent(Math.pow(ball.axes[5], 3));
 
 		orbOutput.x = convertAxisToPercent(ball.axes[0]);
 		orbOutput.y = convertAxisToPercent(ball.axes[1]);
 		orbOutput.z = convertAxisToPercent(ball.axes[2]);
-		// orbOutput.rx = convertAxisToPercent(ball.axes[3]);
-		// orbOutput.ry = convertAxisToPercent(ball.axes[4]);
-		// orbOutput.rz = convertAxisToPercent(ball.axes[5]);
+		orbOutput.rx = convertAxisToPercent(ball.axes[3]);
+		orbOutput.ry = convertAxisToPercent(ball.axes[4]);
+		orbOutput.rz = convertAxisToPercent(ball.axes[5]);
+		
+		buttonOutput = 0;
+		for(var i = 0; i < 16; i++){
+			buttonOutput += (ball.buttons[i].value) << i;
+		}
 	}
 	else {
 		orbOutput.x = 0;
@@ -149,6 +156,8 @@ function gamepadConversion() {
 		orbOutput.rx = 0;
 		orbOutput.ry = 0;
 		orbOutput.rz = 0;
+
+		buttonOutput = 0;
 	}
 }
 
@@ -301,28 +310,28 @@ function passSerialToBallData() {
 var mode = modeTest();
 
 if (mode == 0) {
-    document.getElementById("unsupported").style.visibility = "visible";
+	document.getElementById("unsupported").style.visibility = "visible";
 }
 else if (mode == 1) {
-    document.getElementById("conDevice").style.visibility = "visible";
+	document.getElementById("conDevice").style.visibility = "visible";
 }
 else if (mode == 2) {
-    document.getElementById("conDevice").style.visibility = "visible";
+	document.getElementById("conDevice").style.visibility = "visible";
 }
 
 document.getElementById("demo").style.visibility = "visible";
 
 function serialConnected() {
-    document.getElementById("serialCon").style.visibility = "hidden";
-    //document.getElementById("displayHorizontal").style.visibility = "visible";
-    showDisplay();
+	document.getElementById("serialCon").style.visibility = "hidden";
+	//document.getElementById("displayHorizontal").style.visibility = "visible";
+	showDisplay();
 }
 
 function serialDisonnected() {
-    //document.getElementById("displayHorizontal").style.visibility = "hidden";
-    //document.getElementById("displayVertical").style.visibility = "hidden";
-    hideDisplays();
-    document.getElementById("conDevice").style.visibility = "visible";
+	//document.getElementById("displayHorizontal").style.visibility = "hidden";
+	//document.getElementById("displayVertical").style.visibility = "hidden";
+	hideDisplays();
+	document.getElementById("conDevice").style.visibility = "visible";
 }
 
 connectedToSerial = serialConnected;
@@ -330,12 +339,12 @@ connectedToSerial = serialConnected;
 disconnectedToSerial = serialDisonnected;
 
 window.addEventListener("gamepadconnected", (event) => {
-    gamepadData = event.gamepad;
-    console.log("A gamepad was connected:");
-    console.log("Gamepad Object");
-    console.log(gamepadData);
-    console.log("Gamepad Axes");
-    console.log(gamepadData.axes);
+	var gamepadData = event.gamepad;
+	console.log("A gamepad was connected:");
+	console.log("Gamepad Object");
+	console.log(gamepadData);
+	console.log("Gamepad Axes");
+	console.log(gamepadData.axes);
 });
 
 
@@ -349,88 +358,88 @@ var domRZ = document.getElementsByName("RZ");
 var interval;
 
 function loadOrbValues(object, index, array) {
-    // console.log(this);
-    object.innerHTML = numberFormat.format(this * 100);
+	// console.log(this);
+	object.innerHTML = numberFormat.format(this * 100);
 }
 
 function pollGamepads() {
-    var gamepads = navigator.getGamepads();
-    // console.log(mode);
-    // console.log(gamepads.length);
-    if (mode == -1) {
-        clearInterval(interval);
-        hideDisplays();
-        document.getElementById("serialCon").style.visibility = "hidden";
-        document.getElementById("conDevice").style.visibility = "hidden";
-        document.getElementById("unkownError").style.visibility = "visible";
-    }
+	var gamepads = navigator.getGamepads();
+	// console.log(mode);
+	// console.log(gamepads.length);
+	if (mode == -1) {
+		clearInterval(interval);
+		hideDisplays();
+		document.getElementById("serialCon").style.visibility = "hidden";
+		document.getElementById("conDevice").style.visibility = "hidden";
+		document.getElementById("unkownError").style.visibility = "visible";
+	}
 
-    if (gamepads.length != 0) {
-        domX.forEach(loadOrbValues, orbOutput.x);
-        domY.forEach(loadOrbValues, orbOutput.y);
-        domZ.forEach(loadOrbValues, orbOutput.z);
-        domRX.forEach(loadOrbValues, orbOutput.rx);
-        domRY.forEach(loadOrbValues, orbOutput.ry);
-        domRZ.forEach(loadOrbValues, orbOutput.rz);
-    }
+	if (gamepads.length != 0) {
+		domX.forEach(loadOrbValues, orbOutput.x);
+		domY.forEach(loadOrbValues, orbOutput.y);
+		domZ.forEach(loadOrbValues, orbOutput.z);
+		domRX.forEach(loadOrbValues, orbOutput.rx);
+		domRY.forEach(loadOrbValues, orbOutput.ry);
+		domRZ.forEach(loadOrbValues, orbOutput.rz);
+	}
 }
 
 if (mode > 0) {
-    interval = setInterval(pollGamepads, 10);
+	interval = setInterval(pollGamepads, 10);
 }
 window.addEventListener("gamepadconnected", (event) => {
-    if (mode == 1) {
-        if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control")) {
-            document.getElementById("conDevice").style.visibility = "hidden";
-            //document.getElementById("displayHorizontal").style.visibility = "visible";
-            showDisplay();
-        }
-    }
-    else if (mode == 2) {
-        document.getElementById("serialCon").style.visibility = "visible";
-        document.getElementById("conDevice").style.visibility = "hidden";
-    }
+	if (mode == 1) {
+		if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control")) {
+			document.getElementById("conDevice").style.visibility = "hidden";
+			//document.getElementById("displayHorizontal").style.visibility = "visible";
+			showDisplay();
+		}
+	}
+	else if (mode == 2) {
+		document.getElementById("serialCon").style.visibility = "visible";
+		document.getElementById("conDevice").style.visibility = "hidden";
+	}
 });
 window.addEventListener("gamepaddisconnected", (event) => {
-    if (mode == 1) {
-        if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control")) {
-            document.getElementById("conDevice").style.visibility = "visible";
-            //document.getElementById("displayHorizontal").style.visibility = "hidden";
-            hideDisplays();
-        }
-    }
-    if (mode == 2) {
-        document.getElementById("conDevice").style.visibility = "visible";
-        document.getElementById("serialCon").style.visibility = "hidden";
-        //document.getElementById("displayHorizontal").style.visibility = "hidden";
-        hideDisplays();
-    }
+	if (mode == 1) {
+		if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control")) {
+			document.getElementById("conDevice").style.visibility = "visible";
+			//document.getElementById("displayHorizontal").style.visibility = "hidden";
+			hideDisplays();
+		}
+	}
+	if (mode == 2) {
+		document.getElementById("conDevice").style.visibility = "visible";
+		document.getElementById("serialCon").style.visibility = "hidden";
+		//document.getElementById("displayHorizontal").style.visibility = "hidden";
+		hideDisplays();
+	}
 });
 
 window.matchMedia("(orientation: landscape)").addListener(showDisplay);
 
 function showDisplay() {
-    if (ballConnected) {
-        if (window.matchMedia("(orientation: landscape)").matches) {
-            showHorizontalDisplay();
-        }
-        else {
-            showVerticalDisplay();
-        }
-    }
+	if (ballConnected) {
+		if (window.matchMedia("(orientation: landscape)").matches) {
+			showHorizontalDisplay();
+		}
+		else {
+			showVerticalDisplay();
+		}
+	}
 }
 
 function showHorizontalDisplay() {
-    document.getElementById("displayHorizontal").style.visibility = "visible";
-    document.getElementById("displayVertical").style.visibility = "hidden";
+	document.getElementById("displayHorizontal").style.visibility = "visible";
+	document.getElementById("displayVertical").style.visibility = "hidden";
 }
 
 function showVerticalDisplay() {
-    document.getElementById("displayHorizontal").style.visibility = "hidden";
-    document.getElementById("displayVertical").style.visibility = "visible";
+	document.getElementById("displayHorizontal").style.visibility = "hidden";
+	document.getElementById("displayVertical").style.visibility = "visible";
 }
 
 function hideDisplays() {
-    document.getElementById("displayHorizontal").style.visibility = "hidden";
-    document.getElementById("displayVertical").style.visibility = "hidden";
+	document.getElementById("displayHorizontal").style.visibility = "hidden";
+	document.getElementById("displayVertical").style.visibility = "hidden";
 }

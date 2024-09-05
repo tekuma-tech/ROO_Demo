@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import {orbOutput} from './OrbHandler'
+import { orbOutput } from './OrbHandler'
+import { buttonOutput } from './OrbHandler'
 const scene = new THREE.Scene();
 
 scene.background = new THREE.Color(0x808080);
@@ -84,21 +85,31 @@ function setCubeVals(x, y, z, rx, ry, rz) {
 	cubeGroup.rotation.set(-rx, -ry, -rz);
 }
 
-function addCubeVals(x, y, z, rx, ry, rz){
-	dotXgroup.position.set(0, y, z);
-	dotYgroup.position.set(x, 0, z);
-	dotZgroup.position.set(x, y, 0);
+function addCubeVals(x, y, z, rx, ry, rz) {
+	dotXgroup.position.set(0, cubeGroup.position.y, cubeGroup.position.z);
+	dotYgroup.position.set(cubeGroup.position.x, 0, cubeGroup.position.z);
+	dotZgroup.position.set(cubeGroup.position.x, cubeGroup.position.y, 0);
 
-	pos = new THREE.Vector3(x,y,z)
-	cubeGroup.position.set(pos);
+	var pos = new THREE.Vector3(x, y, z).add(cubeGroup.position);
+	// var rot = new THREE.Vector3(-rx  / 50, -ry  / 50, -rz  / 50).add(cubeGroup.rotation);
+	pos.clamp(new THREE.Vector3(-50, -50, -50), new THREE.Vector3(50, 50, 50));
+	cubeGroup.position.set(pos.x, pos.y, pos.z);
+	// cubeGroup.rotation.set(rot.x, rot.y, rot.z);
 	cubeGroup.rotation.set(-rx, -ry, -rz);
 }
 
-// var t = 0;
+
+var state = 0;
 function animate() {
-	// t += 0.01;
-	// setCubePos(	25 * Math.sin(t), 	25 * Math.sin(2 * t), 	25 * Math.sin(4 * t));
-	setCubeVals(orbOutput.x * 50, orbOutput.y * 50, orbOutput.z * 50, orbOutput.rx, orbOutput.ry, orbOutput.rz);
+	if( buttonOutput > 0 ){
+		state = 1 - state;
+	}
+	if(state){
+		addCubeVals(orbOutput.x, orbOutput.y, orbOutput.z, orbOutput.rx, orbOutput.ry, orbOutput.rz);
+	} else {
+		setCubeVals(orbOutput.x * 50, orbOutput.y * 50, orbOutput.z * 50, orbOutput.rx, orbOutput.ry, orbOutput.rz);
+	}
+
 	renderer.render(scene, camera);
 }
 renderer.setAnimationLoop(animate);
