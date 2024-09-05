@@ -215,7 +215,6 @@ var passingArray = [];
 var d = new Date();
 var pastTime = d.getTime();
 
-var test = 0;
 // var publicPromise;
 async function serialRead() {
 	try {
