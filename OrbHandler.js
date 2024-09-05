@@ -2,6 +2,7 @@ var mode = 0; //0 os and browser not supported, 1 use gamepad libary, 2 use seri
 var ballConnected = false;
 var ball = 0;
 var orbOutput = { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 };  //range -1 to 1;
+export {orbOutput};
 var connectedToSerial = function temp() { };
 var disconnectedToSerial = function temp() { };
 
