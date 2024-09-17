@@ -9,7 +9,7 @@ var connectedToSerial = function temp() { };
 var disconnectedToSerial = function temp() { };
 
 window.addEventListener("gamepadconnected", (event) => {
-	if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control") || event.gamepad.id.includes("EMU")) {
+	if (event.gamepad.id.includes("Tekuma") || event.gamepad.id.includes("ROV Control") || event.gamepad.id.includes("EMU") || gamePads[i].id.includes("Controller")) {
 		modeTest();
 		clearFirstLoad();
 		connectToBall();
@@ -29,7 +29,7 @@ function modeTest() {
 	if(navigator.userAgent.includes("Android")) {
 		usingAndroid = true;
 	} else {
-		usingAndroid = true;
+		usingAndroid = false;
 	}
 	if (navigator.userAgent.includes("Chrome")) {
 		usingChrome = true;
@@ -90,7 +90,7 @@ function useGamepadAPI() {
 
 	for (var i = 0; i < gamePads.length; i++) {
 		try{
-			if (gamePads[i].id.includes("Tekuma") || gamePads[i].id.includes("ROV Control") || gamePads[i].id.includes("EMU")) {
+			if (gamePads[i].id.includes("Tekuma") || gamePads[i].id.includes("ROV Control") || gamePads[i].id.includes("EMU") || gamePads[i].id.includes("Controller")) {
 				console.log("Valid Controller found");
 				ball = gamePads[i];
 				ballConnected = true;
@@ -150,11 +150,12 @@ function gamepadConversion() {
 		orbOutput.x = convertAxisToPercent(ball.axes[0]);
 		orbOutput.y = convertAxisToPercent(ball.axes[1]);
 		orbOutput.z = convertAxisToPercent(ball.axes[2]);
-		orbOutput.rx = convertAxisToPercent(ball.axes[3]);
 		if(!usingAndroid){
+			orbOutput.rx = convertAxisToPercent(ball.axes[3]);
 			orbOutput.ry = convertAxisToPercent(ball.axes[4]);
 			orbOutput.rz = convertAxisToPercent(ball.axes[5]);
 		} else {
+			orbOutput.rx = convertAxisToPercent(0);
 			orbOutput.ry = convertAxisToPercent(0);
 			orbOutput.rz = convertAxisToPercent(0);
 		}
